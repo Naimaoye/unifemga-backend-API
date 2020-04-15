@@ -4,6 +4,8 @@
   "description": "loaning app",
   "main": "index.js",
   "scripts": {
+    "build": "babel -d ./build ./src -s",
+    "start": "npm run build && node ./build/index.js",
     "dev": "nodemon ./src/index --exec babel-node",
     "lint": "npx eslint ./src --fix"
   },
