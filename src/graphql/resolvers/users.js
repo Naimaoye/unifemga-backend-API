@@ -7,14 +7,13 @@ import jwt from 'jsonwebtoken';
 import { UserInputError } from 'apollo-server';
 
 import User from '../../models/Users';
-import { SECRET_KEY, senderEmail } from '../../config/config';
+import { SECRET_KEY } from '../../config/config';
 import {
   validateRegisterInput,
   validateLoginInput
 } from '../../utils/validation';
 import sendEmail from '../../utils/mailer';
 import transporter from '../../utils/transporter';
-import resetMailer from '../../utils/reset_mailer';
 
 const composeEmailVerification = (email, origin, token) => ({
   recipientEmail: `${email}`,
@@ -29,7 +28,7 @@ const verifyToken = token => {
 };
 
 const constructResetEmail = (email_address, origin) => {
-  const recipients = [email_address];
+  const recipients = `${email_address}`;
   const issued = Date.now();
   const expiryDate = parseInt(Date.now(), 10) + 3600000;
   const payload = { email_address, issued, expiryDate };
@@ -40,10 +39,14 @@ const constructResetEmail = (email_address, origin) => {
            <p>you can reset your password <a href='${link}'>here</a></p>
     `;
   return {
+<<<<<<< HEAD
+    recipientEmail: recipients,
+=======
     from: `no-reply@unifemga-credit-app<${senderEmail}>`,
     to: [...recipients],
+>>>>>>> 94e33f59fea7b595440bed53fefd826c2ddd5124
     subject: 'Unifemga Password Reset Link',
-    html: text
+    body: text
   };
 };
 
@@ -63,11 +66,12 @@ const usersResolvers = {
         };
       }
       try {
-        resetMailer(transporter(), emailOptions);
+        sendEmail(transporter(), emailOptions);
         return {
           status: 200,
           message: 'a password reset link has been sent to your email'
         };
+      // eslint-disable-next-line arrow-body-style
       } catch (err) {
         return {
           status: 500,
@@ -78,7 +82,6 @@ const usersResolvers = {
     async forgotPasswordChange(_, { newPassword }, context) {
       const auth = context.req.headers.authorization;
       const token = auth.split('Bearer ')[1];
-      console.log(token);
       const data = verifyToken(token);
       const hasExpired = data.expiryDate < Date.now();
       if (hasExpired) {
@@ -92,7 +95,6 @@ const usersResolvers = {
         const user = await User.findOne({ email_address });
         user.password = newPassword;
         user.save();
-        console.log(user.password);
         return {
           status: 201,
           message: 'Password update successful'
