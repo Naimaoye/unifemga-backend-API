@@ -17,7 +17,7 @@ const server = new ApolloServer({
   playground: true,
   context: ({ req, res }) => ({ req, res })
 });
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4001;
 
 mongoose.connect(URI, {
   useNewUrlParser: true

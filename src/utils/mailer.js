@@ -4,7 +4,7 @@ import { senderEmail } from '../config/config';
 
 const sendEmail = (transport, emailData) => new Promise((resolve, reject) => {
   transport.sendMail({
-    from: `"Unifemga"<${senderEmail}>`, // sender address
+    from: `"no-reply@unifemga-credit"<${senderEmail}>`, // sender address
     to: `${emailData.recipientEmail}`,
     subject: `${emailData.subject}`, // Subject line
     html: `${emailData.body}`
