@@ -53,12 +53,9 @@ type Query {
 type Mutation {
     register(registerInput: UserInput): User!
     login(email_address: String!, password: String!): User!
-<<<<<<< HEAD
     verify(token: String): Status
     sendForgotPasswordEmail(email_address: String!): Status!
     forgotPasswordChange(newPassword: String!): Status!
-=======
->>>>>>> c7b734bb61c5258ce67df76cd42f36307e287c72
 }
 `;
 
