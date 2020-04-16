@@ -17,6 +17,13 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/naimah_d/unifemga-backend#readme",
   "dependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "babel-eslint": "^10.0.3",
     "@babel/runtime-corejs3": "^7.5.5",
     "@hapi/joi": "^15.1.1",
     "apollo-server": "^2.11.0",
@@ -39,13 +46,6 @@
     "path": "^0.12.7"
   },
   "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/node": "^7.5.5",
-    "@babel/plugin-transform-runtime": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
-    "@babel/register": "^7.5.5",
-    "babel-eslint": "^10.0.3",
     "coveralls": "^3.0.6",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
