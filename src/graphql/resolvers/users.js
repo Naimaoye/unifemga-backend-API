@@ -39,7 +39,12 @@ const constructResetEmail = (email_address, origin) => {
            <p>you can reset your password <a href='${link}'>here</a></p>
     `;
   return {
+<<<<<<< HEAD
     recipientEmail: recipients,
+=======
+    from: `no-reply@unifemga-credit-app<${senderEmail}>`,
+    to: [...recipients],
+>>>>>>> 94e33f59fea7b595440bed53fefd826c2ddd5124
     subject: 'Unifemga Password Reset Link',
     body: text
   };
