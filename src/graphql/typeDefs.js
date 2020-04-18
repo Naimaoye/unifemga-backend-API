@@ -37,6 +37,7 @@ type User {
     profile_photo: String!
     role: String!
     status: Int!
+    registration_status: String
     message: String
     createdAt: String!
 }
