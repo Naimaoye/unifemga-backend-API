@@ -4,7 +4,7 @@
 /* eslint-disable camelcase */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { UserInputError } from 'apollo-server';
+import { UserInputError, AuthenticationError } from 'apollo-server';
 
 import User from '../../models/Users';
 import { SECRET_KEY } from '../../config/config';
@@ -14,12 +14,13 @@ import {
 } from '../../utils/validation';
 import sendEmail from '../../utils/mailer';
 import transporter from '../../utils/transporter';
+import { checkAuth } from '../../utils/checkAuth';
 
 const composeEmailVerification = (email, origin, token) => ({
   recipientEmail: `${email}`,
   subject: 'Email verification',
   body: `<p>Your registration was successful. Please click on the link below to verify your email</p></br>
-    <a href='${origin}/api/v1/users/verify/${token}'>click here to verify your email</a>`
+    <a href='${origin}/verify/${token}'>click here to verify your email</a>`
 });
 
 const verifyToken = token => {
@@ -33,18 +34,13 @@ const constructResetEmail = (email_address, origin) => {
   const expiryDate = parseInt(Date.now(), 10) + 3600000;
   const payload = { email_address, issued, expiryDate };
   const token = jwt.sign(payload, SECRET_KEY);
-  const link = `${origin}/api/v1/users/reset/${token}`;
+  const link = `${origin}/reset/${token}`;
   const text = `
            <h2>Hi, there</h2>
            <p>you can reset your password <a href='${link}'>here</a></p>
     `;
   return {
-<<<<<<< HEAD
     recipientEmail: recipients,
-=======
-    from: `no-reply@unifemga-credit-app<${senderEmail}>`,
-    to: [...recipients],
->>>>>>> 94e33f59fea7b595440bed53fefd826c2ddd5124
     subject: 'Unifemga Password Reset Link',
     body: text
   };
@@ -80,14 +76,12 @@ const usersResolvers = {
       }
     },
     async forgotPasswordChange(_, { newPassword }, context) {
-      const auth = context.req.headers.authorization;
-      const token = auth.split('Bearer ')[1];
-      const data = verifyToken(token);
+      const data = checkAuth(context);
       const hasExpired = data.expiryDate < Date.now();
       if (hasExpired) {
         return {
           status: 400,
-          message: 'this link has expired'
+          message: 'the password reset link has expired'
         };
       }
       try {
@@ -107,20 +101,21 @@ const usersResolvers = {
       }
     },
     async verify(_, { token }) {
-      const { email_address } = verifyToken(token);
-      if (!email_address) {
-        return {
-          message: 'Unable to complete verification',
-          status: 500,
-        };
+      if (!token) {
+        throw new AuthenticationError('token must be provided !');
       }
-      const user = await User.findOne({ email_address });
-      user.is_email_verified = true;
-      user.save();
-      return {
-        message: 'Your email Address has been verified successfully',
-        status: 200
-      };
+      try {
+        const { email_address } = verifyToken(token);
+        const user = await User.findOne({ email_address });
+        user.is_email_verified = true;
+        user.save();
+        return {
+          message: 'Your email Address has been verified successfully',
+          status: 200
+        };
+      } catch (err) {
+        throw new AuthenticationError('Invalid/expired token');
+      }
     },
     async login(_, { email_address, password }) {
       const { errors, valid } = validateLoginInput(email_address, password);
@@ -140,17 +135,21 @@ const usersResolvers = {
         errors.general = 'Wrong credentials';
         throw new UserInputError('Wrong credentials', { errors });
       }
-      if (!user.is_email_verified) {
-        errors.general = 'Email not verified';
-        throw new UserInputError('Please verify your email to login');
-      }
+
       const token = jwt.sign({
         id: user.id,
         email_address: user.email_address,
-        username: user.username,
         role: user.role,
-        createdAt: user.createdAt
       }, SECRET_KEY, { expiresIn: '24h' });
+      if (!user.is_email_verified) {
+        return {
+          ...user._doc,
+          status: 200,
+          id: user._id,
+          message: 'please verify your email address',
+          token,
+        };
+      }
       return {
         ...user._doc,
         status: 200,
@@ -259,7 +258,6 @@ const usersResolvers = {
         const token = jwt.sign({
           id: res.id,
           email_address: res.email_address,
-          username: res.username,
           createdAt: res.createdAt
         }, SECRET_KEY);
         const { origin } = context.req.headers;
