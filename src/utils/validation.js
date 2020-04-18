@@ -15,9 +15,7 @@ export const validateRegisterInput = (
   course_of_study,
   bvn,
   unifemga_member,
-  home_phone_number,
   mobile_phone_number,
-  business_phone_number,
   household_income_from_salaries,
   household_income_from_others,
   household_expenses
@@ -67,14 +65,8 @@ export const validateRegisterInput = (
   if (unifemga_member.trim() === '') {
     errors.unifemga_member = 'Member must not be empty';
   }
-  if (home_phone_number.trim() === '') {
-    errors.home_phone_number = 'PhoneNumber must not be empty';
-  }
   if (mobile_phone_number.trim() === '') {
     errors.mobile_phone_number = 'PhoneNumber must not be empty';
-  }
-  if (business_phone_number.trim() === '') {
-    errors.business_phone_number = 'PhoneNumber must not be empty';
   }
   if (household_income_from_salaries.trim() === '') {
     errors.household_income_from_salaries = 'Income must not be empty';
