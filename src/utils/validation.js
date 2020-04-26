@@ -110,3 +110,28 @@ export const validateLoginInput = (email_address, password) => {
     valid: Object.keys(errors).length < 1
   };
 };
+
+export const validateCreateAdminInput = (email_address, first_name, surname, role) => {
+  const errors = {};
+  if (email_address.trim() === '') {
+    errors.email_address = 'email must not be empty';
+  } else {
+    const regEx = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    if (!email_address.match(regEx)) {
+      errors.email_address = 'Email must be a valid one';
+    }
+  }
+  if (first_name.trim() === '') {
+    errors.first_name = 'firstname must not be empty';
+  }
+  if (surname.trim() === '') {
+    errors.surname = 'surname must not be empty';
+  }
+  if (role.trim() === '') {
+    errors.role = 'admin role must not be empty';
+  }
+  return {
+    errors,
+    valid: Object.keys(errors).length < 1
+  };
+};

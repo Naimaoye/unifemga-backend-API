@@ -1,5 +1,4 @@
 /* eslint-disable import/no-named-as-default-member */
-/* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 import bcrypt from 'bcryptjs';
@@ -47,9 +46,6 @@ const constructResetEmail = (email_address, origin) => {
 };
 
 const usersResolvers = {
-  Query: {
-    hello: () => 'hello world!'
-  },
   Mutation: {
     async sendForgotPasswordEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
@@ -189,7 +185,6 @@ const usersResolvers = {
       },
       context
     ) {
-    // validate user data.
       const { valid, errors } = validateRegisterInput(
         username,
         password,
@@ -224,8 +219,6 @@ const usersResolvers = {
           }
         });
       }
-      // hash passwords and create token.
-      // password = await bcrypt.hash(password, 12);
       try {
         const newUser = new User({
           username,
@@ -273,7 +266,6 @@ const usersResolvers = {
           message: msg
         };
       } catch (error) {
-        console.log(error);
         return {
           status: 500,
           error: 'database error'
