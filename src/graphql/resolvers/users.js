@@ -34,7 +34,7 @@ const constructResetEmail = (email_address, origin) => {
   const expiryDate = parseInt(Date.now(), 10) + 3600000;
   const payload = { email_address, issued, expiryDate };
   const token = jwt.sign(payload, SECRET_KEY);
-  const link = `${origin}/reset/${token}`;
+  const link = `${origin}/reset?token=${token}`;
   const text = `
            <h2>Hi, there</h2>
            <p>you can reset your password <a href='${link}'>here</a></p>
