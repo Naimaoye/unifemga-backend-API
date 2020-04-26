@@ -56,6 +56,7 @@ type Mutation {
     login(email_address: String!, password: String!): User!
     verify(token: String): Status
     sendForgotPasswordEmail(email_address: String!): Status!
+    resendForgotPasswordEmail(email_address: String!): Status!
     forgotPasswordChange(newPassword: String!): Status!
 }
 `;
