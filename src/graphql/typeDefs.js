@@ -15,10 +15,10 @@ input UserInput {
   course_of_study: String!
   bvn: String!
   unifemga_member: String!
-  unifemga_chapter: String
-  home_phone_number: String!
+  unifemga_chapter: String!
+  home_phone_number: String
   mobile_phone_number: String!
-  business_phone_number: String!
+  business_phone_number: String
   household_income_from_salaries: String!
   household_income_from_others: String!
   household_expenses: String!
