@@ -51,6 +51,23 @@ const usersResolvers = {
     hello: () => 'hello world!'
   },
   Mutation: {
+    async resendForgotPasswordEmail(_, { email_address }, context) {
+      const { origin } = context.req.headers;
+      const emailOptions = constructResetEmail(email_address, origin);
+      try {
+        sendEmail(transporter(), emailOptions);
+        return {
+          status: 200,
+          message: 'a password reset link has been sent to your email'
+        };
+      // eslint-disable-next-line arrow-body-style
+      } catch (err) {
+        return {
+          status: 500,
+          message: err
+        };
+      }
+    },
     async sendForgotPasswordEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
       const emailOptions = constructResetEmail(email_address, origin);
