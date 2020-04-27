@@ -54,6 +54,13 @@ const usersResolvers = {
     async resendForgotPasswordEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
       const emailOptions = constructResetEmail(email_address, origin);
+      const user = await User.findOne({ email_address });
+      if (!user) {
+        return {
+          status: 400,
+          message: 'User not found'
+        };
+      }
       try {
         sendEmail(transporter(), emailOptions);
         return {
