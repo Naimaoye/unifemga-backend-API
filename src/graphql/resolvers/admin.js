@@ -34,7 +34,7 @@ const adminResolvers = {
     // TODO: admin can get all admin
     async getAdmins() {
       try {
-        const admins = await User.find().sort({ createdAt: -1 });
+        const admins = await User.find({ $and: [{ role: { $ne: '' } }, { role: { $ne: 'superAdmin' } }] }).sort({ createdAt: -1 });
         return admins;
       } catch (err) {
         throw new Error('Something went wrong');
