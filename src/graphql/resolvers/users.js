@@ -160,7 +160,7 @@ const usersResolvers = {
         id: user.id,
         email_address: user.email_address,
         role: user.role,
-      }, SECRET_KEY, { expiresIn: '24h' });
+      }, SECRET_KEY, { expiresIn: '10h' });
       if (!user.is_email_verified) {
         return {
           ...user._doc,
