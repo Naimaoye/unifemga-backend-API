@@ -47,8 +47,37 @@ type Status {
     message: String!
 }
 
+input AdminInput {
+  first_name: String!
+  surname: String!
+  email_address: String!
+  role: String!
+  profile_photo: String
+  is_email_verified: Boolean
+  createdAt: String
+}
+
+type Admin {
+    id: ID!
+    role: String!
+    token: String!
+    email_address: String!
+    profile_photo: String!
+    status: Int!
+    message: String
+    createdAt: String!
+}
+
+type Admins {
+    id: ID!
+    surname: String!
+    first_name: String!
+    email_address: String!
+    role: String!
+}
+
 type Query {
-    hello: String!
+    getAdmins: [Admins!]
 }
 
 type Mutation {
@@ -58,6 +87,10 @@ type Mutation {
     sendForgotPasswordEmail(email_address: String!): Status!
     resendForgotPasswordEmail(email_address: String!): Status!
     forgotPasswordChange(newPassword: String!): Status!
+    createAdmin(adminInput: AdminInput): Admin!
+    verifyAdmin(token: String!, password: String!): Admin!
+    deleteAdmin(adminId: ID!): Status!
+    editAdmin(adminId: ID!, adminInput: AdminInput): Status!
 }
 `;
 
