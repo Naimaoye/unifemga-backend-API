@@ -20,7 +20,7 @@ const composeEmailVerification = (email, origin, token) => ({
   recipientEmail: `${email}`,
   subject: 'Email verification',
   body: `<p>Your registration was successful. Please click on the link below to verify your email</p></br>
-    <a href='${origin}/verify/${token}'>click here to verify your email and set password</a>`
+    <a href='${origin}/verify?token=${token}'>click here to verify your email and set password</a>`
 });
 
 const verifyToken = token => {
@@ -32,7 +32,13 @@ const verifyToken = token => {
 const adminResolvers = {
   Query: {
     // TODO: admin can get all admin
-    async getAdmins() {
+    // eslint-disable-next-line no-empty-pattern
+    async getAdmins(_, {}, context) {
+      const admin = checkAuth(context);
+      if (admin.role !== 'superAdmin') {
+        console.log(admin.role);
+        throw new AuthenticationError('action not allowed');
+      }
       try {
         const admins = await User.find({ $and: [{ role: { $ne: '' } }, { role: { $ne: 'superAdmin' } }] }).sort({ createdAt: -1 });
         return admins;
