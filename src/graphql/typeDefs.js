@@ -85,6 +85,7 @@ type Mutation {
     register(registerInput: UserInput): User!
     login(email_address: String!, password: String!): User!
     verify(token: String): Status
+    resendVerifyEmail(email_address: String!): Status
     sendForgotPasswordEmail(email_address: String!): Status!
     resendForgotPasswordEmail(email_address: String!): Status!
     forgotPasswordChange(newPassword: String!): Status!

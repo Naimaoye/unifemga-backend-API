@@ -19,7 +19,7 @@ const composeEmailVerification = (email, origin, token) => ({
   recipientEmail: `${email}`,
   subject: 'Email verification',
   body: `<p>Your registration was successful. Please click on the link below to verify your email</p></br>
-    <a href='${origin}/verify/${token}'>click here to verify your email</a>`
+    <a href='${origin}/verify?token=${token}'>click here to verify your email</a>`
 });
 
 const verifyToken = token => {
@@ -47,6 +47,34 @@ const constructResetEmail = (email_address, origin) => {
 
 const usersResolvers = {
   Mutation: {
+    async resendVerifyEmail(_, { email_address }, context) {
+      const { origin } = context.req.headers;
+      const user = await User.findOne({ email_address });
+      if (!user) {
+        return {
+          status: 400,
+          message: 'User not found'
+        };
+      }
+      try {
+        const token = jwt.sign({
+          id: user.id,
+          email_address: user.email_address,
+          createdAt: user.createdAt
+        }, SECRET_KEY);
+        const mailData = composeEmailVerification(email_address, origin, token);
+        sendEmail(transporter(), mailData);
+        return {
+          status: 200,
+          message: 'a link has been sent to your email address'
+        };
+      } catch (e) {
+        return {
+          status: 500,
+          message: 'Something went wrong'
+        };
+      }
+    },
     async resendForgotPasswordEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
       const emailOptions = constructResetEmail(email_address, origin);
