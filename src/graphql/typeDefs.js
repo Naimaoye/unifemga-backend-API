@@ -74,6 +74,7 @@ type Admins {
     first_name: String!
     email_address: String!
     role: String!
+    createdAt: String!
 }
 
 type Query {
