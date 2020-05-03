@@ -63,6 +63,8 @@ type Admin {
     token: String!
     email_address: String!
     profile_photo: String!
+    first_name: String!
+    surname: String!
     status: Int!
     message: String
     createdAt: String!
@@ -92,7 +94,7 @@ type Mutation {
     createAdmin(adminInput: AdminInput): Admin!
     verifyAdmin(token: String!, password: String!): Admin!
     deleteAdmin(adminId: ID!): Status!
-    editAdmin(adminId: ID!, adminInput: AdminInput): Status!
+    editAdmin(adminId: ID!, adminInput: AdminInput): Admin!
 }
 `;
 
