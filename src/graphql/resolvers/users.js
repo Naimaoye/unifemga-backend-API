@@ -1,15 +1,19 @@
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable import/no-named-as-default-member */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { createWriteStream, mkdir } from 'fs';
 import { UserInputError, AuthenticationError } from 'apollo-server';
 
 import User from '../../models/Users';
 import { SECRET_KEY } from '../../config/config';
 import {
   validateRegisterInput,
-  validateLoginInput
+  validateLoginInput,
+  validateEditInput
 } from '../../utils/validation';
 import sendEmail from '../../utils/mailer';
 import transporter from '../../utils/transporter';
@@ -46,7 +50,86 @@ const constructResetEmail = (email_address, origin) => {
 };
 
 const usersResolvers = {
+  // TODO: user account settings
+  // TODO: upload profile picture
   Mutation: {
+    async userProfileSettings(_,
+      {
+        editUser: {
+          username,
+          password,
+          email_address,
+          first_name,
+          surname,
+          middle_name,
+          mobile_phone_number,
+        }
+      },
+      context) {
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const { valid, errors } = validateEditInput(
+        username,
+        password,
+        email_address,
+        first_name,
+        surname,
+        middle_name,
+        mobile_phone_number
+      );
+      if (!valid) {
+        throw new UserInputError('Errors', { errors });
+      }
+      try {
+        const user = await User.findOne({ _id: id });
+        user.username = username;
+        user.password = password;
+        user.email_address = email_address;
+        user.first_name = first_name;
+        user.surname = surname;
+        user.middle_name = middle_name;
+        user.mobile_phone_number = mobile_phone_number;
+        user.save();
+        return {
+          message: 'Profile update successful',
+          status: 200,
+          email_address: user.email_address,
+          username: user.username,
+          profile_photo: user.profile_photo
+        };
+      } catch (e) {
+        throw new Error('Unable to update profile');
+      }
+    },
+    async uploadImage(_, { file }, context) {
+      const checkLoggedIn = checkAuth(context);
+      const { email_address } = checkLoggedIn;
+      const user = await User.findOne({ email_address });
+      mkdir('UploadedImages', { recursive: true }, err => {
+        if (err) throw err;
+      });
+      try {
+        const { createReadStream, filename } = await file;
+        const path = `UploadedImages/${filename}`;
+        await new Promise(res =>
+          createReadStream()
+            .pipe(createWriteStream(path))
+            .on('close', res)
+        );
+        user.profile_photo = filename;
+        user.save();
+        return {
+          status: 200,
+          message: 'Profile photo uploaded successfully',
+          profile_photo: user.profile_photo
+        };
+      } catch (err) {
+        return {
+          status: 500,
+          message: 'Database error'
+        };
+      }
+    },
     async resendVerifyEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
       const user = await User.findOne({ email_address });
