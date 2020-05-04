@@ -34,12 +34,43 @@ type User {
     email_address: String!
     token: String!
     username: String!
+    first_name: String!
+    surname: String!
+    unifemga_chapter: String!
     profile_photo: String!
     role: String!
     status: Int!
     registration_status: String
     message: String
     createdAt: String!
+}
+
+type UserDetails {
+  username: String!
+  password: String!
+  email_address: String!
+  first_name: String!
+  surname: String!
+  middle_name: String!
+  marital_status: String!
+  gender: String!
+  oau_matric_number: String!
+  year_of_graduation: String!
+  course_of_study: String!
+  bvn: String!
+  unifemga_member: String!
+  unifemga_chapter: String!
+  home_phone_number: String
+  mobile_phone_number: String!
+  business_phone_number: String
+  household_income_from_salaries: String!
+  household_income_from_others: String!
+  household_expenses: String!
+  profile_photo: String
+  registration_status: String
+  is_email_verified: Boolean
+  role: String
+  createdAt: String
 }
 
 type Status {
@@ -71,6 +102,8 @@ type Admin {
     token: String!
     email_address: String!
     profile_photo: String!
+    first_name: String!
+    surname: String!
     status: Int!
     message: String
     createdAt: String!
@@ -87,6 +120,8 @@ type Admins {
 
 type Query {
     getAdmins: [Admins!]
+    getRegisteredUsers: [User!]
+    getUserDetails: UserDetails!
 }
 
 type Mutation {
