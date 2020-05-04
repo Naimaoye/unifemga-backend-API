@@ -103,7 +103,13 @@ export const validateLoginInput = (email_address, password) => {
   };
 };
 
-export const validateCreateAdminInput = (email_address, first_name, surname, role) => {
+export const validateCreateAdminInput = (
+  email_address,
+  first_name,
+  surname,
+  unifemga_chapter,
+  role
+) => {
   const errors = {};
   if (email_address.trim() === '') {
     errors.email_address = 'email must not be empty';
@@ -121,6 +127,9 @@ export const validateCreateAdminInput = (email_address, first_name, surname, rol
   }
   if (role.trim() === '') {
     errors.role = 'admin role must not be empty';
+  }
+  if (unifemga_chapter.trim() === '') {
+    errors.unifemga_chapter = 'unifemga chapter must not be empty';
   }
   return {
     errors,

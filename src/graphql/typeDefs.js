@@ -60,6 +60,7 @@ input AdminInput {
   surname: String!
   email_address: String!
   role: String!
+  unifemga_chapter: String!
   profile_photo: String
   is_email_verified: Boolean
   createdAt: String

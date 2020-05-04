@@ -40,7 +40,7 @@ const adminResolvers = {
         throw new AuthenticationError('action not allowed');
       }
       try {
-        const admins = await User.find({ $and: [{ role: { $ne: '' } }, { role: { $ne: 'System Administrator' } }] }).sort({ createdAt: -1 });
+        const admins = await User.find({ $and: [{ role: { $ne: 'user' } }, { role: { $ne: 'System Administrator' } }] }).sort({ createdAt: -1 });
         return admins;
       } catch (err) {
         throw new Error('Something went wrong');
@@ -58,6 +58,7 @@ const adminResolvers = {
         email_address,
         first_name,
         surname,
+        unifemga_chapter,
         role,
       }
     }, context) {
@@ -70,6 +71,7 @@ const adminResolvers = {
         email_address,
         first_name,
         surname,
+        unifemga_chapter,
         role
       );
       if (!valid) {
@@ -87,6 +89,7 @@ const adminResolvers = {
         user.email_address = email_address;
         user.first_name = first_name;
         user.surname = surname;
+        user.unifemga_chapter = unifemga_chapter;
         user.role = role;
         user.save();
         return {
@@ -95,6 +98,7 @@ const adminResolvers = {
           email_address: user.email_address,
           first_name: user.first_name,
           surname: user.surname,
+          unifemga_chapter: user.unifemga_chapter,
           role: user.role
         };
       } catch (err) {
@@ -155,6 +159,7 @@ const adminResolvers = {
         first_name,
         surname,
         role,
+        unifemga_chapter,
         profile_photo,
         is_email_verified,
       }
@@ -171,6 +176,7 @@ const adminResolvers = {
         email_address,
         first_name,
         surname,
+        unifemga_chapter,
         role
       );
       if (!valid) {
@@ -191,6 +197,7 @@ const adminResolvers = {
           first_name,
           surname,
           role,
+          unifemga_chapter,
           profile_photo,
           is_email_verified,
           createdAt: new Date().toISOString()
