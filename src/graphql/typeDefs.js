@@ -71,6 +71,8 @@ type Admin {
     token: String!
     email_address: String!
     profile_photo: String!
+    first_name: String!
+    surname: String!
     status: Int!
     message: String
     createdAt: String!

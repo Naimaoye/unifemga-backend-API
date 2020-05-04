@@ -20,7 +20,7 @@ const composeEmailVerification = (email, origin, token) => ({
   recipientEmail: `${email}`,
   subject: 'Email verification',
   body: `<p>Your registration was successful. Please click on the link below to verify your email</p></br>
-    <a href='${origin}/verify?token=${token}'>click here to verify your email and set password</a>`
+    <a href='${origin}/verifyAdmin?token=${token}'>click here to verify your email and set password</a>`
 });
 
 const verifyToken = token => {
@@ -35,12 +35,12 @@ const adminResolvers = {
     // eslint-disable-next-line no-empty-pattern
     async getAdmins(_, {}, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'superAdmin') {
+      if (admin.role !== 'System Administrator') {
         console.log(admin.role);
         throw new AuthenticationError('action not allowed');
       }
       try {
-        const admins = await User.find({ $and: [{ role: { $ne: '' } }, { role: { $ne: 'superAdmin' } }] }).sort({ createdAt: -1 });
+        const admins = await User.find({ $and: [{ role: { $ne: '' } }, { role: { $ne: 'System Administrator' } }] }).sort({ createdAt: -1 });
         return admins;
       } catch (err) {
         throw new Error('Something went wrong');
@@ -62,7 +62,7 @@ const adminResolvers = {
       }
     }, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'superAdmin') {
+      if (admin.role !== 'System Administrator') {
         console.log(admin.role);
         throw new AuthenticationError('action not allowed');
       }
@@ -91,7 +91,11 @@ const adminResolvers = {
         user.save();
         return {
           status: 200,
-          message: 'admin details updated successfully'
+          message: 'admin details updated successfully',
+          email_address: user.email_address,
+          first_name: user.first_name,
+          surname: user.surname,
+          role: user.role
         };
       } catch (err) {
         return {
@@ -102,7 +106,7 @@ const adminResolvers = {
     },
     async deleteAdmin(_, { adminId }, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'superAdmin') {
+      if (admin.role !== 'System Administrator') {
         console.log(admin.role);
         throw new AuthenticationError('action not allowed');
       }
@@ -156,7 +160,7 @@ const adminResolvers = {
       }
     }, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'superAdmin') {
+      if (admin.role !== 'System Administrator') {
         console.log(admin.role);
         return {
           status: 409,
