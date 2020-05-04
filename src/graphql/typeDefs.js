@@ -46,7 +46,15 @@ type Status {
     status: Int!
     message: String!
 }
-
+input UserEdit {
+    email_address: String!
+    first_name: String!
+    surname: String!
+    username: String!
+    password: String!
+    middle_name: String!
+    mobile_phone_number: String!
+}
 input AdminInput {
   first_name: String!
   surname: String!
@@ -94,7 +102,9 @@ type Mutation {
     createAdmin(adminInput: AdminInput): Admin!
     verifyAdmin(token: String!, password: String!): Admin!
     deleteAdmin(adminId: ID!): Status!
-    editAdmin(adminId: ID!, adminInput: AdminInput): Admin!
+    editAdmin(adminId: ID!, adminInput: AdminInput): Status!
+    uploadImage(file: Upload!): Status!
+    userProfileSettings(editUser: UserEdit!): User!
 }
 `;
 

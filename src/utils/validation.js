@@ -127,3 +127,45 @@ export const validateCreateAdminInput = (email_address, first_name, surname, rol
     valid: Object.keys(errors).length < 1
   };
 };
+
+export const validateEditInput = (
+  username,
+  password,
+  email_address,
+  first_name,
+  surname,
+  middle_name,
+  mobile_phone_number,
+) => {
+  const errors = {};
+  if (username.trim() === '') {
+    errors.username = 'Username must not be empty';
+  }
+  if (email_address.trim() === '') {
+    errors.email_address = 'email must not be empty';
+  } else {
+    const regEx = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    if (!email_address.match(regEx)) {
+      errors.email_address = 'Email must be a valid one';
+    }
+  }
+  if (password === '') {
+    errors.password = 'Password must not be empty';
+  }
+  if (first_name.trim() === '') {
+    errors.first_name = 'Firstname must not be empty';
+  }
+  if (surname.trim() === '') {
+    errors.surname = 'Surname must not be empty';
+  }
+  if (middle_name.trim() === '') {
+    errors.middle_name = 'middlename must not be empty';
+  }
+  if (mobile_phone_number.trim() === '') {
+    errors.mobile_phone_number = 'MobilePhoneNumber must not be empty';
+  }
+  return {
+    errors,
+    valid: Object.keys(errors).length < 1
+  };
+};
