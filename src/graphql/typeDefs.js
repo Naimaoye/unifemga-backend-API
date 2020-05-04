@@ -46,6 +46,7 @@ type User {
 }
 
 type UserDetails {
+  id: ID!
   username: String!
   password: String!
   email_address: String!
