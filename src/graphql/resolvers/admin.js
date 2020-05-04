@@ -35,7 +35,9 @@ const adminResolvers = {
     // eslint-disable-next-line no-empty-pattern
     async getAdmins(_, {}, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'System Administrator') {
+      const { id } = admin;
+      const adminUser = User.findOne({ _id: id });
+      if (adminUser.role !== 'System Administrator') {
         console.log(admin.role);
         throw new AuthenticationError('action not allowed');
       }
@@ -63,7 +65,9 @@ const adminResolvers = {
       }
     }, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'System Administrator') {
+      const { id } = admin;
+      const adminUser = User.findOne({ _id: id });
+      if (adminUser.role !== 'System Administrator') {
         console.log(admin.role);
         throw new AuthenticationError('action not allowed');
       }
@@ -110,8 +114,10 @@ const adminResolvers = {
     },
     async deleteAdmin(_, { adminId }, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'System Administrator') {
-        console.log(admin.role);
+      const { id } = admin;
+      const adminUser = User.findOne({ _id: id });
+      if (adminUser.role !== 'System Administrator') {
+        console.log(adminUser.role);
         throw new AuthenticationError('action not allowed');
       }
       if (adminId === '') {
@@ -140,8 +146,8 @@ const adminResolvers = {
         throw new AuthenticationError('token and password must be provided !');
       }
       try {
-        const { email_address } = verifyToken(token);
-        const user = await User.findOne({ email_address });
+        const { id } = verifyToken(token);
+        const user = await User.findOne({ _id: id });
         user.is_email_verified = true;
         user.password = password;
         user.save();
@@ -165,8 +171,10 @@ const adminResolvers = {
       }
     }, context) {
       const admin = checkAuth(context);
-      if (admin.role !== 'System Administrator') {
-        console.log(admin.role);
+      const { id } = admin;
+      const adminUser = User.findOne({ _id: id });
+      if (adminUser.role !== 'System Administrator') {
+        console.log(adminUser.role);
         return {
           status: 409,
           message: 'You are not authorized'
@@ -205,8 +213,6 @@ const adminResolvers = {
         const res = await newUser.save();
         const token = jwt.sign({
           id: res.id,
-          email_address: res.email_address,
-          createdAt: res.createdAt
         }, SECRET_KEY);
         const { origin } = context.req.headers;
         const msg = 'Kindly confirm the link sent to your email account to complete your registration';
