@@ -47,7 +47,33 @@ const adminResolvers = {
       } catch (err) {
         throw new Error('Something went wrong');
       }
-    }
+    },
+    async  getRegisteredUsers(_, {}, context) {
+      const admin = checkAuth(context);
+      if (admin.role !== 'Member Registration Approving Officer') {
+        console.log(admin.role);
+        throw new AuthenticationError('action not allowed');
+      }
+      try {
+        const users = await User.find({ role: 'user' }).sort({ createdAt: -1 });
+        return users;
+      } catch (e) {
+        return {
+          message: 'Something went wrong',
+          status: 500
+        };
+      }
+    },
+    async getUserDetails(_, {}, context) {
+      const user = checkAuth(context);
+      const { email_address } = user;
+      try {
+        const userDetails = await User.findOne({ email_address });
+        return userDetails;
+      } catch (e) {
+        throw new AuthenticationError('Could not get user credentials');
+      }
+    },
   },
   Mutation: {
     // TODO: admin can delete admin

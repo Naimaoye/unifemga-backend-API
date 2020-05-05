@@ -142,8 +142,6 @@ const usersResolvers = {
       try {
         const token = jwt.sign({
           id: user.id,
-          email_address: user.email_address,
-          createdAt: user.createdAt
         }, SECRET_KEY);
         const mailData = composeEmailVerification(email_address, origin, token);
         sendEmail(transporter(), mailData);
@@ -160,7 +158,6 @@ const usersResolvers = {
     },
     async resendForgotPasswordEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
-      const emailOptions = constructResetEmail(email_address, origin);
       const user = await User.findOne({ email_address });
       if (!user) {
         return {
@@ -169,6 +166,8 @@ const usersResolvers = {
         };
       }
       try {
+        const { id } = user;
+        const emailOptions = constructResetEmail(email_address, id, origin);
         sendEmail(transporter(), emailOptions);
         return {
           status: 200,
@@ -237,8 +236,8 @@ const usersResolvers = {
         throw new AuthenticationError('token must be provided !');
       }
       try {
-        const { email_address } = verifyToken(token);
-        const user = await User.findOne({ email_address });
+        const { id } = verifyToken(token);
+        const user = await User.findOne({ _id: id });
         user.is_email_verified = true;
         user.save();
         return {
@@ -270,8 +269,6 @@ const usersResolvers = {
 
       const token = jwt.sign({
         id: user.id,
-        email_address: user.email_address,
-        role: user.role,
       }, SECRET_KEY, { expiresIn: '10h' });
       if (!user.is_email_verified) {
         return {
@@ -386,8 +383,6 @@ const usersResolvers = {
         const res = await newUser.save();
         const token = jwt.sign({
           id: res.id,
-          email_address: res.email_address,
-          createdAt: res.createdAt
         }, SECRET_KEY);
         const { origin } = context.req.headers;
         const msg = 'Kindly confirm the link sent to your email account to complete your registration';
