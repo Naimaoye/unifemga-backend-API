@@ -31,11 +31,11 @@ const verifyToken = token => {
   return decoded;
 };
 
-const constructResetEmail = (email_address, origin) => {
+const constructResetEmail = (email_address, id, origin) => {
   const recipients = `${email_address}`;
   const issued = Date.now();
   const expiryDate = parseInt(Date.now(), 10) + 3600000;
-  const payload = { email_address, issued, expiryDate };
+  const payload = { id, issued, expiryDate };
   const token = jwt.sign(payload, SECRET_KEY);
   const link = `${origin}/reset?token=${token}`;
   const text = `
@@ -103,8 +103,8 @@ const usersResolvers = {
     },
     async uploadImage(_, { file }, context) {
       const checkLoggedIn = checkAuth(context);
-      const { email_address } = checkLoggedIn;
-      const user = await User.findOne({ email_address });
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
       mkdir('UploadedImages', { recursive: true }, err => {
         if (err) throw err;
       });
@@ -158,7 +158,6 @@ const usersResolvers = {
     },
     async resendForgotPasswordEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
-      const emailOptions = constructResetEmail(email_address, origin);
       const user = await User.findOne({ email_address });
       if (!user) {
         return {
@@ -167,6 +166,8 @@ const usersResolvers = {
         };
       }
       try {
+        const { id } = user;
+        const emailOptions = constructResetEmail(email_address, id, origin);
         sendEmail(transporter(), emailOptions);
         return {
           status: 200,
@@ -182,7 +183,6 @@ const usersResolvers = {
     },
     async sendForgotPasswordEmail(_, { email_address }, context) {
       const { origin } = context.req.headers;
-      const emailOptions = constructResetEmail(email_address, origin);
       const user = await User.findOne({ email_address });
       if (!user) {
         return {
@@ -191,6 +191,8 @@ const usersResolvers = {
         };
       }
       try {
+        const { id } = user;
+        const emailOptions = constructResetEmail(email_address, id, origin);
         sendEmail(transporter(), emailOptions);
         return {
           status: 200,
