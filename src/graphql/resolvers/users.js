@@ -103,8 +103,8 @@ const usersResolvers = {
     },
     async uploadImage(_, { file }, context) {
       const checkLoggedIn = checkAuth(context);
-      const { email_address } = checkLoggedIn;
-      const user = await User.findOne({ email_address });
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
       mkdir('UploadedImages', { recursive: true }, err => {
         if (err) throw err;
       });
