@@ -266,7 +266,6 @@ const usersResolvers = {
         errors.general = 'Wrong credentials';
         throw new UserInputError('Wrong credentials', { errors });
       }
-
       const token = jwt.sign({
         id: user.id,
       }, SECRET_KEY, { expiresIn: '10h' });

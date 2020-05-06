@@ -34,11 +34,10 @@ const adminResolvers = {
     // TODO: admin can get all admin
     // eslint-disable-next-line no-empty-pattern
     async getAdmins(_, {}, context) {
-      const admin = checkAuth(context);
-      const { id } = admin;
-      const adminUser = User.findOne({ _id: id });
-      if (adminUser.role !== 'System Administrator') {
-        console.log(admin.role);
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
+      if (user.role !== 'System Administrator') {
         throw new AuthenticationError('action not allowed');
       }
       try {
@@ -49,9 +48,10 @@ const adminResolvers = {
       }
     },
     async  getRegisteredUsers(_, {}, context) {
-      const admin = checkAuth(context);
-      if (admin.role !== 'Member Registration Approving Officer') {
-        console.log(admin.role);
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
+      if (user.role !== 'Member Registration Approving Officer') {
         throw new AuthenticationError('action not allowed');
       }
       try {
@@ -66,9 +66,9 @@ const adminResolvers = {
     },
     async getUserDetails(_, {}, context) {
       const user = checkAuth(context);
-      const { email_address } = user;
+      const { id } = user;
       try {
-        const userDetails = await User.findOne({ email_address });
+        const userDetails = await User.findOne({ _id: id });
         return userDetails;
       } catch (e) {
         throw new AuthenticationError('Could not get user credentials');
@@ -90,11 +90,10 @@ const adminResolvers = {
         role,
       }
     }, context) {
-      const admin = checkAuth(context);
-      const { id } = admin;
-      const adminUser = User.findOne({ _id: id });
-      if (adminUser.role !== 'System Administrator') {
-        console.log(admin.role);
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
+      if (user.role !== 'System Administrator') {
         throw new AuthenticationError('action not allowed');
       }
       const { valid, errors } = validateCreateAdminInput(
@@ -111,25 +110,25 @@ const adminResolvers = {
         throw new Error('admin ID must be provided');
       }
       try {
-        const user = await User.findById(adminId);
-        if (user.id !== adminId) {
+        const admin = await User.findById(adminId);
+        if (admin.id !== adminId) {
           console.log(user.id);
           throw new Error('admin not found');
         }
-        user.email_address = email_address;
-        user.first_name = first_name;
-        user.surname = surname;
-        user.unifemga_chapter = unifemga_chapter;
-        user.role = role;
-        user.save();
+        admin.email_address = email_address;
+        admin.first_name = first_name;
+        admin.surname = surname;
+        admin.unifemga_chapter = unifemga_chapter;
+        admin.role = role;
+        admin.save();
         return {
           status: 200,
           message: 'admin details updated successfully',
-          email_address: user.email_address,
-          first_name: user.first_name,
-          surname: user.surname,
-          unifemga_chapter: user.unifemga_chapter,
-          role: user.role
+          email_address: admin.email_address,
+          first_name: admin.first_name,
+          surname: admin.surname,
+          unifemga_chapter: admin.unifemga_chapter,
+          role: admin.role
         };
       } catch (err) {
         return {
@@ -139,22 +138,21 @@ const adminResolvers = {
       }
     },
     async deleteAdmin(_, { adminId }, context) {
-      const admin = checkAuth(context);
-      const { id } = admin;
-      const adminUser = User.findOne({ _id: id });
-      if (adminUser.role !== 'System Administrator') {
-        console.log(adminUser.role);
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
+      if (user.role !== 'System Administrator') {
+        console.log(user.role);
         throw new AuthenticationError('action not allowed');
       }
       if (adminId === '') {
         throw new AuthenticationError('admin ID must not be empty');
       }
       try {
-        const user = await User.findById(adminId);
-        if (user.id === adminId) {
-          console.log(user.id);
-          await user.delete();
-          user.save();
+        const admin = await User.findById(adminId);
+        if (admin.id === adminId) {
+          await admin.delete();
+          admin.save();
           return {
             status: 200,
             message: 'admin deleted successfully'
@@ -196,11 +194,11 @@ const adminResolvers = {
         is_email_verified,
       }
     }, context) {
-      const admin = checkAuth(context);
-      const { id } = admin;
-      const adminUser = User.findOne({ _id: id });
-      if (adminUser.role !== 'System Administrator') {
-        console.log(adminUser.role);
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const admin = await User.findOne({ _id: id });
+      if (admin.role !== 'System Administrator') {
+        console.log(admin.role);
         return {
           status: 409,
           message: 'You are not authorized'
