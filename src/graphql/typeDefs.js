@@ -16,6 +16,7 @@ input UserInput {
   bvn: String!
   unifemga_member: String!
   unifemga_chapter: String!
+  home_address: String!
   home_phone_number: String
   mobile_phone_number: String!
   business_phone_number: String
@@ -61,6 +62,7 @@ type UserDetails {
   bvn: String!
   unifemga_member: String!
   unifemga_chapter: String!
+  home_address: String
   home_phone_number: String
   mobile_phone_number: String!
   business_phone_number: String
