@@ -23,6 +23,12 @@ const composeEmailVerification = (email, origin, token) => ({
     <a href='${origin}/verifyAdmin?token=${token}'>click here to verify your email and set password</a>`
 });
 
+const composeRegistrationStatusEmail = (email, decision) => ({
+  recipientEmail: `${email}`,
+  subject: 'Your Registration Status',
+  body: `<p>Hi <br> This is to notify you that your registration has been ${decision}</p>`
+});
+
 const verifyToken = token => {
   const decoded = jwt.verify(token, SECRET_KEY);
   return decoded;
@@ -76,10 +82,38 @@ const adminResolvers = {
     },
   },
   Mutation: {
-    // TODO: admin can delete admin
-    // TODO: admin can edit admin
-    // TODO: Account settings
-    // TODO: Upload profile photo
+    async approveOrRejectMemberRegistration(_, { userId, decision }, context) {
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const admin = await User.findOne({ _id: id });
+      if (admin.role !== 'Member Registration Approving Officer') {
+        throw new AuthenticationError('action not allowed');
+      }
+      if (userId === '') {
+        throw new Error('user ID must be provided');
+      }
+      try {
+        const user = await User.findById(userId);
+        if (user.id !== userId) {
+          throw new Error('user not found');
+        }
+        user.registration_status = decision;
+        user.save();
+        const email = user.email_address;
+        const mailData = composeRegistrationStatusEmail(email, decision);
+        sendEmail(transporter(), mailData);
+        return {
+          status: 200,
+          message: `Registration has been ${decision}`,
+          registration_status: user.registration_status
+        };
+      } catch (e) {
+        return {
+          status: 500,
+          message: 'Unable to update registration status'
+        };
+      }
+    },
     async editAdmin(_, {
       adminId,
       adminInput: {

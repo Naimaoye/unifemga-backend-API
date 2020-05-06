@@ -140,6 +140,7 @@ type Mutation {
     editAdmin(adminId: ID!, adminInput: AdminInput): Status!
     uploadImage(file: Upload!): Status!
     userProfileSettings(editUser: UserEdit!): User!
+    approveOrRejectMemberRegistration(userId: String!, decision: String!): User!
 }
 `;
 
