@@ -268,6 +268,7 @@ const usersResolvers = {
       }
       const token = jwt.sign({
         id: user.id,
+        role: user.role
       }, SECRET_KEY, { expiresIn: '10h' });
       if (!user.is_email_verified) {
         return {
