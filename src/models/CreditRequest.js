@@ -17,7 +17,27 @@ const creditSchema = new Schema({
   existing_loan: { type: String },
   frequency_of_payment: { type: String },
   existing_loan_information: { type: String },
-  ho
+  home_address: { type: String },
+  home_ownership_status: { type: String },
+  email_address: { type: String },
+  guarantors_fullname: { type: String },
+  guarantors_phone_number: { type: String },
+  guarantors_email_address: { type: String },
+  guarantors_home_address: { type: String },
+  business_name: { type: String },
+  business_reg_number: { type: String },
+  date_of_incorporation: { type: String },
+  business_sector: { type: String },
+  stage_of_business: { type: String },
+  customer_segments: { type: String },
+  value_proposition: { type: String },
+  revenue_streams: { type: String },
+  cost_structure: { type: String },
+  channels: { type: String },
+  key_partners: { type: String },
+  key_activities: { type: String },
+  key_resources: { type: String },
+  customer_relationship: { type: String },
 
 });
 
