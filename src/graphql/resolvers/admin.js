@@ -1,9 +1,9 @@
+/* eslint-disable no-empty-pattern */
 /* eslint-disable arrow-body-style */
 /* eslint-disable no-console */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable object-curly-newline */
 /* eslint-disable camelcase */
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { UserInputError, AuthenticationError } from 'apollo-server';
 

@@ -105,6 +105,7 @@ type Admin {
     email_address: String!
     profile_photo: String!
     first_name: String!
+    unifemga_chapter: String!
     surname: String!
     status: Int!
     message: String
@@ -119,6 +120,16 @@ type Admins {
     role: String!
     createdAt: String!
 }
+
+type File {
+    id: ID!
+    filename: String!
+    mimetype: String!
+    path: String!
+    user: ID
+    message: String
+    status: Int
+  }
 
 type Query {
     getAdmins: [Admins!]
@@ -138,7 +149,7 @@ type Mutation {
     verifyAdmin(token: String!, password: String!): Admin!
     deleteAdmin(adminId: ID!): Status!
     editAdmin(adminId: ID!, adminInput: AdminInput): Status!
-    uploadImage(file: Upload!): Status!
+    uploadFile(file: Upload!): File
     userProfileSettings(editUser: UserEdit!): User!
 }
 `;

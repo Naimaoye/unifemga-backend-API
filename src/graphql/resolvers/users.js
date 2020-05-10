@@ -1,3 +1,4 @@
+/* eslint-disable object-curly-newline */
 /* eslint-disable function-paren-newline */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable import/no-named-as-default-member */
@@ -5,10 +6,12 @@
 /* eslint-disable camelcase */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { createWriteStream, mkdir } from 'fs';
+import shortid from 'shortid';
+import { createWriteStream } from 'fs';
 import { UserInputError, AuthenticationError } from 'apollo-server';
 
 import User from '../../models/Users';
+import File from '../../models/File';
 import { SECRET_KEY } from '../../config/config';
 import {
   validateRegisterInput,
@@ -47,6 +50,23 @@ const constructResetEmail = (email_address, id, origin) => {
     subject: 'Unifemga Password Reset Link',
     body: text
   };
+};
+
+const storeUpload = async ({ stream, filename, mimetype }) => {
+  const id = shortid.generate();
+  const path = `${id}-${filename}`;
+  return new Promise((resolve, reject) =>
+    stream
+      .pipe(createWriteStream(path))
+      .on('finish', () => resolve({ id, path, filename, mimetype }))
+      .on('error', reject)
+  );
+};
+const processUpload = async upload => {
+  const { createReadStream, filename, mimetype } = await upload;
+  const stream = createReadStream();
+  const file = await storeUpload({ stream, filename, mimetype });
+  return file;
 };
 
 const usersResolvers = {
@@ -101,33 +121,30 @@ const usersResolvers = {
         throw new Error('Unable to update profile');
       }
     },
-    async uploadImage(_, { file }, context) {
+    async uploadFile(_, { file }, context) {
       const checkLoggedIn = checkAuth(context);
       const { id } = checkLoggedIn;
-      const user = await User.findOne({ _id: id });
-      mkdir('UploadedImages', { recursive: true }, err => {
-        if (err) throw err;
-      });
+      const userPhoto = await File.findOne({ user: id });
+      if (userPhoto) {
+        throw new Error('user image already exist');
+      }
       try {
-        const { createReadStream, filename } = await file;
-        const path = `UploadedImages/${filename}`;
-        await new Promise(res =>
-          createReadStream()
-            .pipe(createWriteStream(path))
-            .on('close', res)
-        );
-        user.profile_photo = filename;
-        user.save();
+        const upload = await processUpload(file);
+        const { path, filename, mimetype } = upload;
+        const newFile = new File({
+          path,
+          filename,
+          mimetype,
+          user: id
+        });
+        const res = await newFile.save();
         return {
+          ...res._doc,
           status: 200,
           message: 'Profile photo uploaded successfully',
-          profile_photo: user.profile_photo
         };
       } catch (err) {
-        return {
-          status: 500,
-          message: 'Database error'
-        };
+        throw new Error('profile photo upload failed');
       }
     },
     async resendVerifyEmail(_, { email_address }, context) {
