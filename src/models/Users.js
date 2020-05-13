@@ -25,8 +25,8 @@ const userSchema = new Schema({
   household_income_from_salaries: { type: String },
   household_income_from_others: { type: String },
   household_expenses: { type: String },
-  role: { type: String, default: '' },
-  profile_photo: { type: String, default: 'user' },
+  role: { type: String, default: 'user' },
+  profile_photo: { type: String, default: '' },
   registration_status: { type: String, default: 'pending' },
   is_email_verified: { type: Boolean, default: false },
   createdAt: { type: String }

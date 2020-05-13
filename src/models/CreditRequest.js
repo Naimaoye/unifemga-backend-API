@@ -38,7 +38,19 @@ const creditSchema = new Schema({
   key_activities: { type: String },
   key_resources: { type: String },
   customer_relationship: { type: String },
-
+  SCAO_decision: { type: String, default: 'pending' },
+  SCCAO_decision: { type: String, default: 'pending' },
+  loan_application_status: { type: String, default: 'pending' },
+  loan_start_date: { type: String, default: '' },
+  loan_due_date: { type: String, default: '' },
+  loan_repayment_status: { type: String, default: '' },
+  username: { type: String },
+  unifemga_chapter: { type: String },
+  createdAt: { type: String },
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }
 });
 
 const Credit = model('Credit', creditSchema);

@@ -23,10 +23,10 @@ const composeEmailVerification = (email, origin, token) => ({
     <a href='${origin}/verifyAdmin?token=${token}'>click here to verify your email and set password</a>`
 });
 
-const composeRegistrationStatusEmail = (email, decision) => ({
+const composeRegistrationStatusEmail = (email, decision, first_name) => ({
   recipientEmail: `${email}`,
   subject: 'Your Registration Status',
-  body: `<p>Hi <br> This is to notify you that your registration has been ${decision}</p>`
+  body: `<p>Hi ${first_name} <br> This is to notify you that your registration has been ${decision}</p>`
 });
 
 const verifyToken = token => {
@@ -57,11 +57,33 @@ const adminResolvers = {
       const checkLoggedIn = checkAuth(context);
       const { id } = checkLoggedIn;
       const user = await User.findOne({ _id: id });
-      if (user.role !== 'Member Registration Approving Officer') {
+      if (user.role !== 'System Administrator') {
         throw new AuthenticationError('action not allowed');
       }
       try {
         const users = await User.find({ role: 'user' }).sort({ createdAt: -1 });
+        return users;
+      } catch (e) {
+        return {
+          message: 'Something went wrong',
+          status: 500
+        };
+      }
+    },
+    async getRegisteredUsersByChapter(_, {}, context) {
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
+      if (user.role !== 'Member Registration Approving Officer') {
+        throw new AuthenticationError('action not allowed');
+      }
+      try {
+        const users = await User.find({
+          $and: [
+            { role: 'user' },
+            { unifemga_chapter: user.unifemga_chapter }
+          ]
+        }).sort({ createdAt: -1 });
         return users;
       } catch (e) {
         return {
@@ -100,7 +122,8 @@ const adminResolvers = {
         user.registration_status = decision;
         user.save();
         const email = user.email_address;
-        const mailData = composeRegistrationStatusEmail(email, decision);
+        const { first_name } = user;
+        const mailData = composeRegistrationStatusEmail(email, decision, first_name);
         sendEmail(transporter(), mailData);
         return {
           status: 200,
