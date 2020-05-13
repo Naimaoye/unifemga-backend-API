@@ -134,9 +134,71 @@ type File {
     status: Int
   }
 
+  input CreditRequest {
+  fullname: String!
+  date_of_birth: String!
+  fullname_of_nextOfKin: String!
+  personal_bank_account_name: String!
+  personal_bank_account_number: String!
+  personal_bank: String!
+  marital_status: String!
+  source_of_salary: String!
+  number_of_children: Int
+  formal_employment_status: String!
+  company_tax_ID: String!
+  personal_tax_ID: String!
+  annual_salary: String
+  existing_loan: String!
+  frequency_of_payment: String!
+  existing_loan_information: String!
+  home_address: String!
+  home_ownership_status: String!
+  email_address: String!
+  guarantors_fullname: String!
+  guarantors_phone_number: String!
+  guarantors_email_address: String!
+  guarantors_home_address: String!
+  business_name: String!
+  business_reg_number: String!
+  date_of_incorporation: String!
+  business_sector: String!
+  stage_of_business: String
+  customer_segments: String
+  value_proposition: String
+  revenue_streams: String!
+  cost_structure: String!
+  channels: String!
+  key_partners: String
+  key_activities: String!
+  key_resources: String!
+  customer_relationship: String!
+  SCAO_decision: String
+  SCCAO_decision: String
+  loan_application_status: String
+  loan_start_date: String
+  loan_due_date: String
+  loan_repayment_status: String
+  username: String
+  user: String
+  }
+
+  type Credit {
+    username: String!
+    fullname: String
+    guarantors_fullname: String!
+    guarantors_phone_number: String!
+    loan_application_status: String
+    SCAO_decision: String
+    SCCAO_decision: String
+    status: Int
+    message: String
+  }
+
+
 type Query {
     getAdmins: [Admins!]
     getRegisteredUsers: [User!]
+    getRegisteredUsersByChapter: [User!]
     getUserDetails: UserDetails!
 }
 
@@ -155,6 +217,7 @@ type Mutation {
     uploadFile(file: Upload!): File
     userProfileSettings(editUser: UserEdit!): User!
     approveOrRejectMemberRegistration(userId: String!, decision: String!): User!
+    createCreditRequest(creditInput: CreditRequest): Credit!
 }
 `;
 

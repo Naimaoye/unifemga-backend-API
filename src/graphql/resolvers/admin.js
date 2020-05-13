@@ -57,11 +57,33 @@ const adminResolvers = {
       const checkLoggedIn = checkAuth(context);
       const { id } = checkLoggedIn;
       const user = await User.findOne({ _id: id });
-      if (user.role !== 'Member Registration Approving Officer') {
+      if (user.role !== 'System Administrator') {
         throw new AuthenticationError('action not allowed');
       }
       try {
         const users = await User.find({ role: 'user' }).sort({ createdAt: -1 });
+        return users;
+      } catch (e) {
+        return {
+          message: 'Something went wrong',
+          status: 500
+        };
+      }
+    },
+    async getRegisteredUsersByChapter(_, {}, context) {
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
+      if (user.role !== 'Member Registration Approving Officer') {
+        throw new AuthenticationError('action not allowed');
+      }
+      try {
+        const users = await User.find({
+          $and: [
+            { role: 'user' },
+            { unifemga_chapter: user.unifemga_chapter }
+          ]
+        }).sort({ createdAt: -1 });
         return users;
       } catch (e) {
         return {

@@ -1,5 +1,6 @@
 import usersResolvers from './users';
 import adminResolvers from './admin';
+import creditResolvers from './credit-request';
 
 const resolvers = {
   Query: {
@@ -7,7 +8,8 @@ const resolvers = {
   },
   Mutation: {
     ...usersResolvers.Mutation,
-    ...adminResolvers.Mutation
+    ...adminResolvers.Mutation,
+    ...creditResolvers.Mutation
   }
 };
 
