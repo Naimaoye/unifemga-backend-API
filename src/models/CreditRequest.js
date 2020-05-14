@@ -45,8 +45,11 @@ const creditSchema = new Schema({
   loan_due_date: { type: String, default: '' },
   loan_repayment_status: { type: String, default: '' },
   username: { type: String },
+<<<<<<< HEAD
   unifemga_chapter: { type: String },
   createdAt: { type: String },
+=======
+>>>>>>> 318bb8e233dec1eed1e625164f6efe1f5f9d1c3b
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
