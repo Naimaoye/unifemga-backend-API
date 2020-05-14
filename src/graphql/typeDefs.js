@@ -16,7 +16,7 @@ input UserInput {
   bvn: String!
   unifemga_member: String!
   unifemga_chapter: String!
-  home_address: String!
+  address: String!
   home_phone_number: String
   mobile_phone_number: String!
   business_phone_number: String
@@ -206,6 +206,8 @@ type Query {
     getUserDetails: UserDetails!
     getCreditRequestByChapter: [Credit!]
     getAllApprovedCreditRequestsBySCAO: [Credit!]
+    getAllCreditRequest: [Credit]
+    getUserCreditRequest: [Credit]
 }
 
 type Mutation {

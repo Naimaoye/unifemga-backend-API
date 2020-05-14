@@ -15,7 +15,7 @@ export const validateRegisterInput = (
   course_of_study,
   bvn,
   unifemga_member,
-  home_address,
+  address,
   mobile_phone_number,
   household_income_from_salaries,
   household_income_from_others,
@@ -66,7 +66,7 @@ export const validateRegisterInput = (
   if (unifemga_member.trim() === '') {
     errors.unifemga_member = 'Member must not be empty';
   }
-  if (home_address === '') {
+  if (address === '') {
     errors.home_address = 'home address must not be empty';
   }
   if (mobile_phone_number.trim() === '') {

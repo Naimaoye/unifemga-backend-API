@@ -1,3 +1,4 @@
+/* eslint-disable no-empty-pattern */
 /* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable camelcase */
@@ -31,6 +32,29 @@ const composeAdminCreditRequestDecisionEmail = (adminEmail, decision, fullname, 
 
 const creditResolvers = {
   Query: {
+    async getUserCreditRequest(_, {}, context) {
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const userCredit = await Credit.find({ user: id });
+      return userCredit;
+    },
+    async getAllCreditRequest(_, {}, context) {
+      const checkLoggedIn = checkAuth(context);
+      const { id } = checkLoggedIn;
+      const user = await User.findOne({ _id: id });
+      if (user.role !== 'System Administrator') {
+        throw new AuthenticationError('action not allowed');
+      }
+      try {
+        const credits = await Credit.find().sort({ createdAt: -1 });
+        return credits;
+      } catch (e) {
+        return {
+          message: 'Something went wrong',
+          status: 500
+        };
+      }
+    },
     async getAllApprovedCreditRequestsBySCAO(_, {}, context) {
       const checkLoggedIn = checkAuth(context);
       const { id } = checkLoggedIn;

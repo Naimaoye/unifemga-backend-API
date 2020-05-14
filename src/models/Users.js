@@ -18,7 +18,7 @@ const userSchema = new Schema({
   bvn: { type: String },
   unifemga_member: { type: String },
   unifemga_chapter: { type: String },
-  home_address: { type: String },
+  address: { type: String },
   home_phone_number: { type: String },
   mobile_phone_number: { type: String },
   business_phone_number: { type: String },
