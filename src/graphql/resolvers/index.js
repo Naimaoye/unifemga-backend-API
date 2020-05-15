@@ -1,13 +1,16 @@
 import usersResolvers from './users';
 import adminResolvers from './admin';
+import creditResolvers from './credit-request';
 
 const resolvers = {
   Query: {
-    ...adminResolvers.Query
+    ...adminResolvers.Query,
+    ...creditResolvers.Query
   },
   Mutation: {
     ...usersResolvers.Mutation,
-    ...adminResolvers.Mutation
+    ...adminResolvers.Mutation,
+    ...creditResolvers.Mutation
   }
 };
 
